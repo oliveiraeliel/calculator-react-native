@@ -9,6 +9,8 @@ export default function App() {
   const buttons = ['AC', 'DEL', '%', '/', 7, 8, 9, '*', 4, 5, 6, '-', 3, 2, 1, '+', 0, '.', '+/-', '=']
   const [currentNumber, setCurrentNumber] = useState("");
   const [lastNumber, setLastNumber] = useState("");
+  const [calculatedNumber, setCalculatedNumber] = useState("");
+  const [operatorsInExpression, setOperatorsInExpression] = useState(1);
 
   function calculator() {
     const splitNumbers = currentNumber.split(' ')
@@ -16,6 +18,7 @@ export default function App() {
     const lastNumber = parseFloat(splitNumbers[2])
     const operator = splitNumbers[1]
 
+    setOperatorsInExpression(1);
     switch (operator) {
       case '+':
         setCurrentNumber((firstNumber + lastNumber).toString())
@@ -33,15 +36,35 @@ export default function App() {
   }
 
   function handleInput(buttonPressed) {
-    console.log(buttonPressed);
-    if (buttonPressed === '+' | buttonPressed === '-' | buttonPressed === "*" | buttonPressed === "/") {
-      setCurrentNumber(`${currentNumber} ${buttonPressed} `)
-      return
+    const lastCharacter = currentNumber.toString();
+
+    // console.log(x.slice(-2))
+    console.log(lastCharacter.slice(-2))
+    if (buttonPressed === '%' | buttonPressed === '+' | buttonPressed === '-' | buttonPressed === "*" | buttonPressed === "/") {
+      if (currentNumber == "") {
+        return
+      } else if (lastCharacter.slice(-2) == "- " | lastCharacter.slice(-2) == "+ " | lastCharacter.slice(-2) == "* " | lastCharacter.slice(-2) == "/ " | lastCharacter.slice(-2) == "% ") {
+        return
+      } else {
+        setOperatorsInExpression(operatorsInExpression + 1);
+        if (operatorsInExpression == 2) {
+          setLastNumber(currentNumber)
+          calculator()
+          return
+        }
+        setCurrentNumber(`${currentNumber} ${buttonPressed} `)
+        return
+      }
+
     }
-    // if(currentNumber === '+' && buttonPressed === '+' | currentNumber === '-' && buttonPressed === '-' | currentNumber === '*' && buttonPressed === '*' | currentNumber === '/' && buttonPressed === '/' ){
-    //   alert("aaa")
-    //   return
+    // if (typeof (buttonPressed) === "number") {
+    //   // alert('asdf')
+
+    // }else if (operatorsInExpression == 2) {
+    //     alert("a")        
+
     // }
+
     switch (buttonPressed) {
       case 'DEL':
         setCurrentNumber(currentNumber.substring(0, (currentNumber.length - 1)))
@@ -51,20 +74,22 @@ export default function App() {
         setCurrentNumber("")
         return
       case '=':
-        setLastNumber(currentNumber + " = ")
+        setLastNumber(currentNumber)
         calculator()
         return
       case '+/-':
         return
     }
     setCurrentNumber(currentNumber + buttonPressed)
+
+
   }
 
   const styles = StyleSheet.create({
     results: {
       backgroundColor: darkMode ? "#282f3b" : "#f5f5f5",
       width: '100%',
-      minHeight: 300,
+      minHeight: '44%',
       alignItems: 'flex-end',
       justifyContent: 'flex-end',
     },
@@ -78,8 +103,6 @@ export default function App() {
       color: darkMode ? "#b5b7bb" : "#7c7c7c",
       fontSize: 20,
       marginRight: 10,
-
-
     },
     themeButton: {
       alignSelf: 'flex-start',
@@ -95,12 +118,13 @@ export default function App() {
     buttons: {
       flexDirection: 'row',
       flexWrap: 'wrap',
+
     },
     button: {
       borderColor: darkMode ? "#3f4d5d" : "#e5e5e5",
       borderWidth: 1,
-      minWidth: 90,
-      minHeight: 90,
+      minWidth: 80,
+      minHeight: 80,
       flex: 2,
       alignItems: 'center',
       justifyContent: 'center'
